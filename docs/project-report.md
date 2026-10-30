@@ -12,7 +12,6 @@
 
 **Prepared:** October 30, 2026, Philippine time
 
-**Status:** Project report draft for member review; not a claim of submission.
 
 ## 1. Project overview
 
