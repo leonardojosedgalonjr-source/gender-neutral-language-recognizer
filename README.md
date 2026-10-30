@@ -20,25 +20,7 @@ React 19, strict TypeScript 5.9, Vite 7, modern CSS, JavaScript regular expressi
 
 Use **Node.js 24 LTS** (minimum 22.13), npm, and a current browser with Unicode property escapes, lookbehind, `TextDecoder`, and `File.arrayBuffer` support. An internet connection is needed for the initial dependency installation, not for analyzing documents. All assets and fonts are local/system resources.
 
-## Installation and development
 
-From the project directory:
-
-```sh
-npm ci
-npm run dev
-```
-
-Open the local URL printed by Vite, normally `http://127.0.0.1:5173/`. Stop the terminal process with Ctrl+C.
-
-## Production build and offline use
-
-```sh
-npm run build
-npm run preview
-```
-
-Open the printed preview URL, normally `http://127.0.0.1:4173/`. `dist/` contains the compiled static application. After dependencies are installed, both build and local serving work without internet. Serve the files over local HTTP; do not double-click `dist/index.html`. The local server only delivers static assets; the application has no backend. No service worker or installed offline/PWA mode is provided.
 
 ## Usage and samples
 
@@ -74,35 +56,6 @@ Representative pattern (the actual implementation includes all 120 alternatives)
 
 Flags: `giu`. Negative lookbehind and lookahead exclude adjacent Unicode letters, combining marks, numbers, and underscores. Alternation selects a configured term; `[ \t]+` permits horizontal phrase spacing only. Global matching finds successive nonoverlapping matches, `i` ignores case, and `u` enables Unicode handling. Results use canonical terms and order of first occurrence. Match offsets are JavaScript UTF-16 string indices, compatible with `slice` even after emoji. The preview renders text nodes and `<mark>` elements, never HTML injection. See the [report](docs/project-report.md) for the full rule table and theory explanation.
 
-## Quality checks
-
-```sh
-npm run format:check
-npm run lint
-npm run typecheck
-npm run test
-npm run build
-git diff --check
-```
-
-`npm run format` applies formatting. `npm run test` executes tests once. GitHub Actions runs the same gates with locked dependencies on pushes and pull requests. Tests cover all 15 requested scenarios plus repeated calls, exact offsets, escaped custom terms, Unicode folding, BOM handling, read failures, and upload races. Executed results are in the report.
-
-## Project structure
-
-```text
-src/
-  app/           Application state and integration tests
-  components/    Upload, results table, safe document preview
-  domain/        Readonly rules, types, pure recognizer and tests
-  utils/         TXT/PDF/DOCX extraction, dispatcher and validation tests
-  test/fixtures/ Real PDF/DOCX files and frozen original vocabulary
-  styles/        Responsive CSS
-  main.tsx       React entry point
-samples/         Demonstration documents
-docs/            Academic report, demonstration guide, screenshots
-.github/         Validation workflow
-AGENTS.md        Project-specific development guidance
-```
 
 ## Known limitations
 
@@ -116,16 +69,7 @@ This is a predefined English vocabulary recognizer, not a grammar checker, bias 
 
 Project members: Leonardo Jose D. Galon Jr., Jessica Mapute, Jade Melanie Acdal, and Christian Olonan.
 
-Instructor: **ALMA MAE B. AUXTERO**. Prepared for **Bohol Island State University, BSCS 3A, Automata and Language Theory**. Deadline: October 31, 2026, Philippine time. Submission remains the students' responsibility.
+Instructor: **ALMA MAE B. AUXTERO**. Prepared for **Bohol Island State University, BSCS 3A, Automata and Language Theory**. 
 
-AI assistance: OpenAI Codex assisted with implementation, tests, review, documentation and screenshot capture. The report preserves the member roles supplied in the existing GitHub history; none are invented here.
+AI assistance: OpenAI Codex assisted with implementation, tests, review, documentation and screenshot capture. 
 
-## Vercel deployment
-
-The existing Vercel project is connected to this GitHub repository. Use that project rather than creating a duplicate. Production should track `main`, framework **Vite**, repository root `./`, build command `npm run build`, output directory `dist`, Node.js **24.x**. No environment variables, backend functions, or `vercel.json` are needed. A verified merge to `main` triggers the linked deployment.
-
-If setting up on another account: sign in at [Vercel](https://vercel.com/new), import `leonardojosedgalonjr-source/gender-neutral-language-recognizer`, confirm the settings above, and select Deploy. Verify the actual returned URL with all three sample formats, check the PDF worker request under `/assets/pdf.worker…mjs`, and download CSV. Do not infer deployment success from a local build. See [validation](docs/validation.md) for the executed release checks.
-
-## Vocabulary maintenance
-
-The single source of truth is `src/domain/recognitionRules.ts`, including categories. Exactly 120 canonical entries are required. The frozen original 20 mappings are tested against the baseline, and every added rule has matching/count assertions. [Vocabulary appendix](docs/vocabulary.md) lists all mappings and contextual cautions. After editing the collection, regenerate that appendix with `node scripts/update-vocabulary-doc.mjs` and run the quality gates. The recognizer itself remains unchanged from version 1.
