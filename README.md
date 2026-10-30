@@ -61,13 +61,7 @@ Flags: `giu`. Negative lookbehind and lookahead exclude adjacent Unicode letters
 
 This is a predefined English vocabulary recognizer, not a grammar checker, bias assessment, or semantic model. Pronouns may be appropriate in context; alternatives may require grammatical changes. Selected plural forms are explicit rules; other inflections, synonyms and unlisted terms are not inferred. Phrases do not match across newlines or nonbreaking spaces. Hyphens and punctuation act as boundaries except where explicitly part of a term. JavaScript Unicode case folding also recognizes forms such as long s. Unicode normalization is not performed. Very large documents are read into memory and processed on the main thread; file and text limits bound normal input, but no large-file performance guarantee is made. Refreshing clears the current document. Browser and screen-reader coverage is limited to the checks documented in the report.
 
-## Academic documentation
 
-- [Project report](docs/project-report.md)
-- [Demonstration guide](docs/demonstration-guide.md)
-- [Screenshot capture instructions](docs/screenshots/README.md)
-
-Project members: Leonardo Jose D. Galon Jr., Jessica Mapute, Jade Melanie Acdal, and Christian Olonan.
 
 Instructor: **ALMA MAE B. AUXTERO**. Prepared for **Bohol Island State University, BSCS 3A, Automata and Language Theory**. 
 
