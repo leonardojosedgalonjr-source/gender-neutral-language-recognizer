@@ -1,21 +1,48 @@
-# Verification record
+# Version 2 verification record
 
-Executed October 30, 2026 (Philippine time) on macOS with Node.js 24.15.0 and npm 11.12.1.
+Date: October 30, 2026 (Philippine time). Environment: macOS, Node.js 24.15.0, npm 11.12.1. Baseline: `e03c269`; remote documentation edits through `20e24cb` were incorporated before release, preserving the recorded member roles.
 
-| Command                | Result                                                                       |
-| ---------------------- | ---------------------------------------------------------------------------- |
-| `npm run format:check` | Passed                                                                       |
-| `npm run lint`         | Passed                                                                       |
-| `npm run typecheck`    | Passed                                                                       |
-| `npm run test`         | Passed: 26 tests, 3 test files, 0 failures                                   |
-| `npm run build`        | Passed: Vite production output generated in `dist/`                          |
-| `git diff --check`     | Passed                                                                       |
-| `npm run dev`          | Launched successfully at localhost after allowing the local listening socket |
+## Automated behavior
 
-Initial sandboxed dependency access and local server startup were restricted; authorized execution outside the sandbox resolved both. The staged Git whitespace check found Markdown hard-break trailing spaces in the report; these were replaced with blank lines before committing. No application-code test failures occurred. GitHub authentication was verified outside the network sandbox.
+145 tests across 9 files passed with zero failures. All 26 original scenarios remain; count/category/unsupported-format assertions were adapted for the intentionally expanded requirements. The original 20 mappings are frozen in a fixture and verified unchanged. Every one of the 100 additions is tested for recognition, repetition, suggestions and embedded-word rejection.
 
-The browser verified real file uploads of the primary and no-match samples. The primary sample returned 15 occurrences across 13 distinct terms; the replacement no-match file returned zero and the exact required message. Genuine screenshots are included. The automated suite additionally verifies the five instructor cases, malformed UTF-8, read errors, Unicode boundaries and offsets, safe highlighting, repeated uploads, recovery, and upload races.
+Real PDF fixtures verify two-page extraction, readable no-match text, blank pages, corruption and password protection. Real DOCX fixtures verify paragraphs, recognition and empty input; corrupt input is rejected. Additional tests verify TXT decoding, binary rejection, legacy DOC, file/text limits, asynchronous races, format switching, safe previews, search/category/sort/reset behavior, drag/drop and CSV quoting/download cleanup.
 
-A focused production-code review covered domain logic, file handling, state, rendering, accessibility, security, performance and documentation. No unresolved critical/high-severity findings were identified. Full screen-reader, cross-browser and large-file performance testing remain outside the executed checks.
+During implementation, a jsdom fixture URL was corrected to a filesystem path, a removed PDF.js configuration option was removed after checking installed types, and Node URL imports were added to the appendix generator. A narrowly documented lint exception allows the intentional binary-control detection regex. No broad lint suppression was introduced.
 
-Remote CI status is available on the repository's Actions tab. Do not infer a passing remote run solely from this local record.
+## Production browser checks
+
+The actual `dist/` build was served with `npm run preview`:
+
+- TXT sample: 15 occurrences, 13 distinct terms.
+- Two-page PDF sample: 4 occurrences, 4 distinct terms; page count 2; correct extracted text and highlighted terms.
+- DOCX sample: 4 occurrences, 4 distinct terms; paragraph breaks preserved.
+- PDF → DOCX → TXT replacements completed correctly.
+- CSV downloaded as `gender-specific-terms-analysis.csv`; its header and four DOCX rows were inspected and correct.
+- PDF.js worker emitted at `/assets/pdf.worker.min-Dkey6ZUl.mjs` and returned HTTP 200 with JavaScript content type. PDF extraction succeeded without fake-worker warnings or console errors.
+- PDF/DOCX libraries are separate lazy-loaded chunks; no CDN worker is configured.
+- Desktop document width equaled viewport width (1280 px); the inspected layout had no document-level horizontal overflow.
+- `v2-docx-results.png` is a genuine capture from this build. Old screenshots are explicitly historical.
+
+The sample PDF pages and DOCX were rendered and visually inspected. PDF rendering emitted local Fontconfig cache warnings but produced readable pages. Fixture-generation tools are development utilities, not runtime dependencies.
+
+## Final review
+
+The focused review covered the unchanged regex engine, all vocabulary additions, boundaries/counts/offsets, format dispatch, extraction cleanup and errors, lazy loading, race handling, safe text rendering, CSV scope/quoting, accessible controls, responsive CSS and documentation. Review corrected extensionless-file acceptance and a two-character PDF limit overcount. No unresolved critical/high-severity issue was found. The original regex engine is unchanged.
+
+Known limits: PDF text order/spacing is heuristic; scans require OCR; DOCX/PDF layout, images and embedded content are not reproduced. Complex compressed inputs can consume memory during parsing before the extracted-text limit applies. Recognition and rendering remain on the main thread. Full browser, screen-reader and adversarial document testing has not been performed.
+
+## Release gates
+
+All six local quality gates passed. The commands executed were:
+
+```sh
+npm run format:check
+npm run lint
+npm run typecheck
+npm run test
+npm run build
+git diff --check
+```
+
+The existing GitHub Actions workflow is retained. Vercel uses the existing GitHub-connected project, production branch main, Vite preset, repository root, `npm run build`, and `dist`. No backend or extra deployment service is added.

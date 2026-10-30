@@ -1,3 +1,4 @@
+import { categoryForTerm } from '../domain/results';
 import type { AggregatedResult } from '../domain/types';
 export function ResultsTable({
   results,
@@ -15,6 +16,7 @@ export function ResultsTable({
             <th scope="col">Detected term</th>
             <th scope="col">Occurrences</th>
             <th scope="col">Suggested alternative</th>
+            <th scope="col">Category</th>
           </tr>
         </thead>
         <tbody>
@@ -23,6 +25,11 @@ export function ResultsTable({
               <th scope="row">{result.term}</th>
               <td>{result.count}</td>
               <td className="alternative">{result.alternative}</td>
+              <td>
+                <span className="category-badge">
+                  {categoryForTerm(result.term)}
+                </span>
+              </td>
             </tr>
           ))}
         </tbody>

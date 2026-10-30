@@ -1,0 +1,82 @@
+[
+  {
+    "term": "chairman",
+    "alternative": "chairperson"
+  },
+  {
+    "term": "chairwoman",
+    "alternative": "chairperson"
+  },
+  {
+    "term": "policeman",
+    "alternative": "police officer"
+  },
+  {
+    "term": "policewoman",
+    "alternative": "police officer"
+  },
+  {
+    "term": "fireman",
+    "alternative": "firefighter"
+  },
+  {
+    "term": "firewoman",
+    "alternative": "firefighter"
+  },
+  {
+    "term": "stewardess",
+    "alternative": "flight attendant"
+  },
+  {
+    "term": "mankind",
+    "alternative": "humankind"
+  },
+  {
+    "term": "manpower",
+    "alternative": "workforce"
+  },
+  {
+    "term": "businessman",
+    "alternative": "businessperson"
+  },
+  {
+    "term": "businesswoman",
+    "alternative": "businessperson"
+  },
+  {
+    "term": "salesman",
+    "alternative": "sales representative"
+  },
+  {
+    "term": "saleswoman",
+    "alternative": "sales representative"
+  },
+  {
+    "term": "mailman",
+    "alternative": "mail carrier"
+  },
+  {
+    "term": "freshman",
+    "alternative": "first-year student"
+  },
+  {
+    "term": "he",
+    "alternative": "they"
+  },
+  {
+    "term": "she",
+    "alternative": "they"
+  },
+  {
+    "term": "ladies and gentlemen",
+    "alternative": "everyone"
+  },
+  {
+    "term": "man-made",
+    "alternative": "artificial"
+  },
+  {
+    "term": "waitress",
+    "alternative": "server"
+  }
+]

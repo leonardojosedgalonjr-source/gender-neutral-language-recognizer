@@ -6,14 +6,19 @@ describe('recognition', () => {
     const result = recognizeText(
       recognitionRules.map((rule) => rule.term).join(', '),
     );
-    expect(result.totalOccurrences).toBe(20);
+    expect(result.totalOccurrences).toBe(120);
     expect(result.results).toEqual(
       recognitionRules.map((rule) => ({ ...rule, count: 1 })),
     );
   });
   it('TEST 2 aggregates mixed capitalization', () => {
     expect(recognizeText('chairman Chairman CHAIRMAN').results).toEqual([
-      { term: 'chairman', alternative: 'chairperson', count: 3 },
+      {
+        term: 'chairman',
+        alternative: 'chairperson',
+        category: 'Leadership',
+        count: 3,
+      },
     ]);
   });
   it('TEST 3 avoids he inside the and shelter', () => {
@@ -38,7 +43,12 @@ describe('recognition', () => {
         'LADIES\t and  GENTLEMEN; ladies\nand gentlemen; ladies and\r\ngentlemen',
       ).results,
     ).toEqual([
-      { term: 'ladies and gentlemen', alternative: 'everyone', count: 1 },
+      {
+        term: 'ladies and gentlemen',
+        alternative: 'everyone',
+        category: 'General language',
+        count: 1,
+      },
     ]);
   });
   it('TEST 9 counts several terms accurately', () => {
