@@ -71,5 +71,5 @@ Project members: Leonardo Jose D. Galon Jr., Jessica Mapute, Jade Melanie Acdal,
 
 Instructor: **ALMA MAE B. AUXTERO**. Prepared for **Bohol Island State University, BSCS 3A, Automata and Language Theory**. 
 
-AI assistance: OpenAI Codex assisted with implementation, tests, review, documentation and screenshot capture. 
+AI assistant: Chatgpt, gemini, claude and codex
 
