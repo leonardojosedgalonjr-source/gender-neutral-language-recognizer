@@ -13,10 +13,12 @@ it('shows terms, counts and alternatives after a real file upload', async () => 
   );
   const table = await screen.findByRole('table');
   const row = within(table).getByRole('row', {
-    name: 'chairman 2 chairperson',
+    name: 'chairman 2 chairperson Leadership',
   });
   expect(row).toBeVisible();
-  expect(within(table).getByRole('row', { name: 'she 1 they' })).toBeVisible();
+  expect(
+    within(table).getByRole('row', { name: 'she 1 they Pronouns' }),
+  ).toBeVisible();
   expect(screen.getByRole('status')).toHaveTextContent(
     '3 occurrences across 2 distinct terms',
   );
@@ -59,9 +61,9 @@ it('TEST 12 replaces results and allows repeated selection of the same file', as
   await user.upload(input(), file);
   await screen.findByRole('table');
   await user.upload(input(), new File(['She'], 'second.txt'));
-  await screen.findByRole('row', { name: 'she 1 they' });
+  await screen.findByRole('row', { name: 'she 1 they Pronouns' });
   expect(
-    screen.queryByRole('row', { name: 'he 1 they' }),
+    screen.queryByRole('row', { name: 'he 1 they Pronouns' }),
   ).not.toBeInTheDocument();
   expect(screen.getByRole('status')).toHaveTextContent('second.txt');
 });
@@ -70,7 +72,7 @@ it('clears old results on invalid upload and recovers afterward', async () => {
   const user = userEvent.setup({ applyAccept: false });
   await user.upload(input(), new File(['He'], 'valid.txt'));
   await screen.findByRole('table');
-  await user.upload(input(), new File(['He'], 'bad.pdf'));
+  await user.upload(input(), new File(['He'], 'bad.doc'));
   expect(await screen.findByRole('alert')).toHaveTextContent(
     'Unsupported file format.',
   );
@@ -107,5 +109,7 @@ it('a slow previous upload cannot overwrite a newer upload', async () => {
     finish(new TextEncoder().encode('He').buffer);
   });
   expect(screen.getByRole('status')).toHaveTextContent('latest.txt');
-  expect(screen.getByRole('row', { name: 'she 1 they' })).toBeVisible();
+  expect(
+    screen.getByRole('row', { name: 'she 1 they Pronouns' }),
+  ).toBeVisible();
 });

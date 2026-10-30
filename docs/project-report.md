@@ -1,4 +1,4 @@
-# Gender Neutral Language Recognizer — project report
+# Gender Neutral Language Recognizer 2.0 — project report
 
 **Bohol Island State University**
 
@@ -12,16 +12,15 @@
 
 **Prepared:** October 30, 2026, Philippine time
 
-
 ## 1. Project overview
 
 The application identifies a predefined vocabulary of gender-specific words and phrases in uploaded text documents. It reports occurrence counts and suggested alternatives while preserving the decoded original text in a highlighted preview. Its purpose is to demonstrate regular-expression recognition and support thoughtful manual language review, rather than decide whether language is appropriate in context.
 
-Users select a UTF-8 `.txt` document, inspect the summary and table, and review each occurrence in context. Invalid extensions, unreadable files, invalid encoding, empty documents and whitespace-only input produce clear feedback. Replacing the file clears old results, and late read completions cannot overwrite a newer selection. All document processing occurs locally in the browser.
+Users select a UTF-8 `.txt`, text-based `.pdf`, or `.docx` document, inspect the summary and table, and review each occurrence in context. Invalid extensions, unreadable files, invalid encoding, empty documents and whitespace-only input produce clear feedback. Replacing the file clears old results, and late read completions cannot overwrite a newer selection. All document processing occurs locally in the browser.
 
 ## 2. Tools and recognition approach
 
-React functional components implement the interface. Strict TypeScript defines rules, matches, aggregate results, summaries and a discriminated file-processing state. Vite builds static assets; native browser APIs read files. Vitest and React Testing Library verify behavior; ESLint, Prettier and GitHub Actions support repeatable quality checks. npm uses a committed lockfile. No database, application backend, AI API or finite state automaton implementation is included.
+React functional components implement the interface. Strict TypeScript defines rules, matches, aggregate results, summaries and a discriminated file-processing state. Vite builds static assets; native browser APIs read files. Lazy-loaded PDF.js extracts PDF text with a bundled local worker; Mammoth extracts DOCX raw text without producing HTML. Vitest and React Testing Library verify behavior; ESLint, Prettier and GitHub Actions support repeatable quality checks. npm uses a committed lockfile. No database, application backend, AI API or finite state automaton implementation is included.
 
 ### Actual regex construction
 
@@ -54,58 +53,35 @@ Each match stores original text, canonical term, alternative, start offset and e
 
 ### Predefined terms and suggested alternatives
 
-| Predefined term      | Suggested alternative |
-| -------------------- | --------------------- |
-| chairman             | chairperson           |
-| chairwoman           | chairperson           |
-| policeman            | police officer        |
-| policewoman          | police officer        |
-| fireman              | firefighter           |
-| firewoman            | firefighter           |
-| stewardess           | flight attendant      |
-| mankind              | humankind             |
-| manpower             | workforce             |
-| businessman          | businessperson        |
-| businesswoman        | businessperson        |
-| salesman             | sales representative  |
-| saleswoman           | sales representative  |
-| mailman              | mail carrier          |
-| freshman             | first-year student    |
-| he                   | they                  |
-| she                  | they                  |
-| ladies and gentlemen | everyone              |
-| man-made             | artificial            |
-| waitress             | server                |
+The collection contains exactly **120 canonical entries**, including the original 20 unchanged mappings and 100 additions. [The generated vocabulary appendix](vocabulary.md) lists every term, alternative and category, with semantic-review cautions. It is derived from the same source used by the application. Categories cover occupations, leadership, public service, education, pronouns and general language. Explicit plural entries are recognized; unlisted inflections are not inferred.
 
-These mappings are suggestions only. They do not guarantee grammatical agreement or suitability in every context.
+### Document extraction and workspace
+
+A typed dispatcher returns filename, format, extracted text, optional page count and nonfatal warnings. TXT retains strict UTF-8/BOM/whitespace behavior and rejects binary controls. PDF text is assembled page by page using text-item geometry and explicit end-of-line flags, with blank lines between pages. PDF tasks and page resources are cleaned up. Textless/scanned PDFs require unsupported OCR; corrupt and password-protected PDFs are rejected. DOCX raw extraction preserves paragraphs and ignores visual formatting. Neither format claims to reproduce the original layout.
+
+Limits are 10 MiB per file, 100 PDF pages and 500,000 extracted characters. Format readers are lazy-loaded. Upload request IDs prevent stale analysis from overwriting newer files. The results toolbar searches canonical terms, filters by category, and sorts by count or term. Clear filters restores the default view. Summary counts and document highlights always refer to the whole document. CSV exports include all results with quoted term, alternative, category and count fields; the source document is untouched.
 
 ## 3. Application screenshots
 
-The following are genuine captures of the running application in a narrow responsive browser viewport. See [capture instructions](screenshots/README.md) for wider replacement captures.
+The version 2 screenshot below was captured from the actual local production build while extracting the supplied DOCX sample. It shows the new controls, category column, and paragraph-preserving highlights. Historical version 1 captures remain in `screenshots/` but are not evidence of version 2 features.
 
-![File-selection control and initial state](screenshots/file-selection.png)
+![Version 2 DOCX analysis workspace](screenshots/v2-docx-results.png)
 
-**Figure 1.** The labeled UTF-8 text-file selection control and initial review area.
+**Figure 1.** Four detected terms from a real Word document, with categories, search/filter/sort controls, CSV export and extracted-text highlights.
 
-![Recognized terms and occurrence counts](screenshots/recognized-terms.png)
-
-**Figure 2.** The primary sample yields 13 distinct terms and 15 occurrences, with the first table rows visible.
-
-![No-match result and document preview](screenshots/no-matches.png)
-
-**Figure 3.** The no-match sample displays the required exact message and preserves the original text.
+See [screenshot notes](screenshots/README.md) for capture provenance and current production evidence.
 
 ## 4. Testing
 
-Executed locally on October 30, 2026, Philippine time, using Node.js 24.15.0 and Vitest. The automated suite contains **26 passing tests across 3 files**, with no failures. Tests use real `File` objects; the test environment supplies the missing jsdom `Blob.arrayBuffer` API through `FileReader`. Production uses native browser APIs.
+Executed locally on October 30, 2026, Philippine time, using Node.js 24.15.0 and Vitest. The automated suite contains **145 passing tests across 9 files**, with no failures. Tests use real `File` objects; the test environment supplies the missing jsdom `Blob.arrayBuffer` API through `FileReader`. Production uses native browser APIs.
 
 | Test case                    | Expected result                                 | Actual result                                                              | Status |
 | ---------------------------- | ----------------------------------------------- | -------------------------------------------------------------------------- | ------ |
-| 1. Predefined terms          | All configured terms and suggestions recognized | 20 terms matched once each with the configured suggestions                 | Passed |
+| 1. Predefined terms          | All configured terms and suggestions recognized | 120 terms matched once each with the configured suggestions                | Passed |
 | 2. Mixed capitalization      | Variants aggregated                             | chairman, Chairman, CHAIRMAN aggregated as chairman: 3                     | Passed |
 | 3. No predefined terms       | No he inside the; exact UI message              | No matches in the/shelter sentence; exact message rendered                 | Passed |
 | 4. Empty file                | Clear empty-document error                      | Zero-byte file rejected; UI error also verified                            | Passed |
-| 5. Unsupported extension     | Clear unsupported-format error                  | PDF extension rejected; prior results cleared                              | Passed |
+| 5. Unsupported extension     | Clear unsupported-format error                  | Unsupported legacy DOC rejected; prior results cleared                     | Passed |
 | 6. Punctuation               | Terms beside punctuation recognized             | Four matches in quotes, parentheses, semicolon and slash input             | Passed |
 | 7. Embedded terms            | No partial-word matches                         | Letter, number, underscore and combining-mark cases rejected               | Passed |
 | 8. Multiword phrase          | Spaces/tabs supported, line breaks rejected     | One supported phrase matched; newline-separated phrases rejected           | Passed |
@@ -117,19 +93,21 @@ Executed locally on October 30, 2026, Philippine time, using Node.js 24.15.0 and
 | 14. Uppercase extension      | TXT accepted                                    | Uppercase filename accepted; original line endings retained                | Passed |
 | 15. Invalid UTF-8            | Clear encoding error                            | Invalid byte sequence rejected                                             | Passed |
 
+All 26 original test scenarios remain; the vocabulary-count expectation, table category labels and unsupported-format example were updated to match version 2 requirements. New tests exercise every added rule, real PDF/DOCX fixtures, textless/protected/corrupt documents, limits, binary TXT, DOCX-to-TXT switching, filters, sorting, drag/drop and CSV escaping/downloads. No extraction-library mocks substitute for the real fixture tests.
+
 Additional passing assertions cover deterministic calls, UTF-16 offsets after emoji, escaped regex metacharacters, longest-first alternatives, empty/duplicate rule configurations, Unicode case folding, BOM removal, failed reads, recovery after invalid files, and a slow upload completing after a newer one.
 
-Browser verification confirmed that the app launches, the primary sample produces **15 occurrences / 13 distinct terms**, and replacing it with the no-match sample produces **0 / 0** and the exact message. The responsive narrow layout was visually inspected. Screenshots above record these observations. Full cross-browser, assistive-technology and large-document performance testing has not been performed.
+Browser verification confirmed that the app launches, the primary sample produces **15 occurrences / 13 distinct terms**, and replacing it with the no-match sample produces **0 / 0** and the exact message. Version 2 production-build checks also verified real two-page PDF and two-paragraph DOCX uploads (four matches each), format switching, and a downloaded CSV containing four correct rows. The locally bundled PDF worker asset returned HTTP 200; PDF extraction completed without browser console warnings or errors. The desktop layout was visually inspected. The version 2 screenshot records the DOCX analysis; historical captures document only version 1. Full cross-browser, assistive-technology and large-document performance testing has not been performed.
 
 Quality gate results are recorded in `validation.md` after execution. CI runs the same gates on pushes and pull requests.
 
 ### Focused code review
 
-Reviewed production types, rules, regex construction and lookup, file handling, state transitions, presentation, safe highlighting, and responsive CSS against correctness, security, accessibility and maintainability requirements. Unicode marks are included in boundaries, and Unicode case folds are handled during lookup. Upload request IDs prevent stale asynchronous results. Semantic text rendering avoids script execution. No critical or high-severity unresolved findings were identified. Large-file main-thread processing and limited browser coverage remain documented limitations, not verified performance guarantees.
+Reviewed production types, rules, regex construction and lookup, file handling, state transitions, presentation, safe highlighting, and responsive CSS against correctness, security, accessibility and maintainability requirements. Unicode marks are included in boundaries, and Unicode case folds are handled during lookup. Upload request IDs prevent stale asynchronous results. Semantic text rendering avoids script execution. No critical or high-severity unresolved findings were identified. Compressed-document parsing cost and limited browser coverage remain documented limitations, not verified performance guarantees.
 
 ## 5. Conclusion
 
-The implementation demonstrates regular-expression recognition for a fixed vocabulary, accurate occurrence aggregation, and a position-preserving preview. Automated tests verify the five instructor cases and additional edge cases. It provides suggestions for human review without changing or transmitting uploaded content. It does not understand context, infer vocabulary variants, or guarantee grammar; very large files may reduce responsiveness. The report and member contribution details require student review before submission.
+The implementation demonstrates regular-expression recognition for a fixed vocabulary, accurate occurrence aggregation, and a position-preserving preview. Automated tests verify the five instructor cases and additional edge cases. It provides suggestions for human review without changing or transmitting uploaded content. It does not understand context, infer vocabulary variants, or guarantee grammar; complex files may reduce responsiveness despite input limits. The report requires student review before submission; confirmed member roles from the existing GitHub history are preserved below.
 
 ## 6. Sources and contributions
 
@@ -141,6 +119,9 @@ Technical references:
 - [Vitest guide](https://vitest.dev/guide/): test execution.
 - [Testing Library documentation](https://testing-library.com/docs/react-testing-library/intro/): behavior-oriented component tests.
 - [MDN regular expressions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions): flags, classes, alternation and assertions.
+- [PDF.js examples](https://mozilla.github.io/pdf.js/examples/): browser PDF processing and worker integration.
+- [Mammoth documentation](https://github.com/mwilliamson/mammoth.js): browser raw-text extraction.
+- [Vercel Vite guide](https://vercel.com/docs/frameworks/frontend/vite): static Vite deployment.
 - [MDN TextDecoder](https://developer.mozilla.org/en-US/docs/Web/API/TextDecoder): UTF-8 decoding and fatal errors.
 
 The supplied project request is the authoritative assignment specification; no separate original guide or academic template was present in the initially empty workspace. The six-section report structure follows that request.
