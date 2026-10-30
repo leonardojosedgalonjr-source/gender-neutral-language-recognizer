@@ -150,7 +150,7 @@ The supplied project request is the authoritative assignment specification; no s
 
 | Member                     | Confirmed contribution (complete after member review) |
 | -------------------------- | ----------------------------------------------------- |
-| Leonardo Jose D. Galon Jr. | To be confirmed by the member                         |
-| Jessica Mapute             | To be confirmed by the member                         |
-| Jade Melanie Acdal         | To be confirmed by the member                         |
-| Christian Olonan           | To be confirmed by the member                         |
+| Leonardo Jose D. Galon Jr. | Team lead                                             |
+| Jessica Mapute             | Tester                                                |
+| Jade Melanie Acdal         | Tester                                                |
+| Christian Olonan           | Tester                                                |
